@@ -1,0 +1,16 @@
+{
+    "name": "xgeo/hello-print",
+    "description": "HelloPrint Challenge - Backend",
+    "type": "project",
+    "version": "1.0",
+    "authors": [
+        {
+            "name": "Geovanny Lino Coutinho",
+            "email": "geovannylc@gmail.com"
+        }
+    ],
+    "require": {
+        "php": "7.4.*",
+        "ext-pdo": "*"
+    }
+}

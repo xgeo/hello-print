@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="c6e4a894-0a32-4b0b-85c9-8d25906338f6" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ComposerSettings" synchronizationState="SYNCHRONIZE">
+    <pharConfigPath>$PROJECT_DIR$/composer.json</pharConfigPath>
+    <execution />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="composer.json" />
+      </list>
+    </option>
+  </component>
+  <component name="PhpWorkspaceProjectConfiguration" interpreter_name="PHP 7.4">
+    <include_path>
+      <path value="$PROJECT_DIR$/vendor/composer" />
+    </include_path>
+  </component>
+  <component name="ProjectId" id="1q4WLePsnwdHoq2Idp9oIIVtQZ6" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.OpenProjectViewOnStart" value="true" />
+    <property name="WebServerToolWindowFactoryState" value="false" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="node.js.detected.package.eslint" value="true" />
+    <property name="node.js.detected.package.tslint" value="true" />
+    <property name="node.js.path.for.package.eslint" value="project" />
+    <property name="node.js.path.for.package.tslint" value="project" />
+    <property name="node.js.selected.package.eslint" value="(autodetect)" />
+    <property name="node.js.selected.package.tslint" value="(autodetect)" />
+    <property name="nodejs_package_manager_path" value="npm" />
+    <property name="settings.editor.selected.configurable" value="reference.webide.settings.project.settings.php" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/src" />
+    </key>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="c6e4a894-0a32-4b0b-85c9-8d25906338f6" name="Default Changelist" comment="" />
+      <created>1616339288397</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1616339288397</updated>
+      <workItem from="1616339289660" duration="1829000" />
+      <workItem from="1616342593981" duration="7698000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="-1512" y="176" key="#Docker" timestamp="1616340584939">
+      <screen x="-2560" y="-66" width="2560" height="1055" />
+    </state>
+    <state x="-1512" y="176" key="#Docker/0.25.1440.875/-2560.-66.2560.1055@-2560.-66.2560.1055" timestamp="1616340584939" />
+    <state x="-1475" y="191" key="NewPhpClassDialog" timestamp="1616359757192">
+      <screen x="-2560" y="-66" width="2560" height="1055" />
+    </state>
+    <state x="-1475" y="191" key="NewPhpClassDialog/0.25.1440.875/-2560.-66.2560.1055@-2560.-66.2560.1055" timestamp="1616359757192" />
+    <state x="-1771" y="97" key="SettingsEditor" timestamp="1616343050600">
+      <screen x="-2560" y="-66" width="2560" height="1055" />
+    </state>
+    <state x="-1771" y="97" key="SettingsEditor/0.25.1440.875/-2560.-66.2560.1055@-2560.-66.2560.1055" timestamp="1616343050600" />
+    <state x="-1615" y="168" width="670" height="676" key="search.everywhere.popup" timestamp="1616366494810">
+      <screen x="-2560" y="-66" width="2560" height="1055" />
+    </state>
+    <state x="-1615" y="168" width="670" height="676" key="search.everywhere.popup/0.25.1440.875/-2560.-66.2560.1055@-2560.-66.2560.1055" timestamp="1616366494810" />
+  </component>
+</project>

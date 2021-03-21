@@ -1,0 +1,35 @@
+version: '3'
+
+services:
+  postgres:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: "test@123123@"
+    ports:
+      - "15432:5432"
+    volumes:
+      - ./hello-print/src/pgsql:/var/lib/postgresql/data
+    networks:
+      - postgres-network
+
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: "geovannylc@gmail.com"
+      PGADMIN_DEFAULT_PASSWORD: "@geo@030690"
+    ports:
+      - "16543:80"
+    depends_on:
+      - postgres
+    networks:
+      - postgres-network
+
+  phpworker:
+    image: php:7.4-cli
+    environment:
+
+networks:
+  postgres-network:
+    driver: bridge
+  kafka:
+    driver: bridge
