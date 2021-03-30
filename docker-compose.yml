@@ -13,7 +13,7 @@ services:
       - "15432:5432"
     volumes:
       - ./database:/var/lib/postgresql/data
-      - ./docker_db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - database
       - kafka

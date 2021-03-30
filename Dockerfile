@@ -42,3 +42,5 @@ RUN php -r "if (hash_file('sha384', 'composer-setup.php') === '756890a4488ce9024
 RUN php composer-setup.php --install-dir=/usr/local/bin/ --filename=composer
 RUN php -r "unlink('composer-setup.php');"
 RUN composer install --no-plugins --no-scripts
+
+COPY ./sql/init.sql /docker-entrypoint-initdb.d/

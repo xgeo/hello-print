@@ -13,14 +13,14 @@
         "php": "7.4.*",
         "ext-pdo": "*",
         "enqueue/rdkafka": "^0.10.9",
-      "ext-json": "*"
+        "ext-json": "*"
     },
     "autoload": {
         "psr-4": {
             "HelloPrint\\": "src/",
             "HelloPrint\\Consumers\\": "src/Consumers",
             "HelloPrint\\Core\\": "src/Core",
-            "HelloPrint\\Http\\": "src/Http",
+            "HelloPrint\\Core\\Helpers\\": "src/Core/Helpers",
             "HelloPrint\\Models\\": "src/Models",
             "HelloPrint\\Producers\\": "src/Producers"
         }

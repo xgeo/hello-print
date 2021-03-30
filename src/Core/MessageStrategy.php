@@ -19,7 +19,7 @@ class MessageStrategy
         $this->randomize = new RandomNames();
     }
 
-    public function process(string $messageBody, $appendToMessage = null): \stdClass
+    public function process(string $messageBody, ?string $appendToMessage): \stdClass
     {
         $object = new \stdClass();
 
@@ -42,7 +42,7 @@ class MessageStrategy
         $this->append = $append;
     }
 
-    private function processMessageId(string $messageBody, $appendToMessage = null)
+    private function processMessageId(string $messageBody, ?string $appendToMessage)
     {
         $id = null;
 
