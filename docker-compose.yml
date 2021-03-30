@@ -3,6 +3,8 @@ version: '3'
 services:
   postgres:
     image: postgres
+    tty: true
+    stdin_open: true
     environment:
       POSTGRES_PASSWORD: "docker_hp@321"
       POSTGRES_DB: "hello_print"
@@ -57,8 +59,8 @@ services:
     command: php requester.php --topic="topicA" --message="Hi," --append="start"
     image: phpdockerio/php74-cli:latest
     tty: true
-    working_dir: "/var/www/hello-print"
     stdin_open: true
+    working_dir: "/var/www/hello-print"
     depends_on:
       - kafka
     env_file:
