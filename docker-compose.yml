@@ -4,32 +4,105 @@ services:
   postgres:
     image: postgres
     environment:
-      POSTGRES_PASSWORD: "test@123123@"
+      POSTGRES_PASSWORD: "docker_hp@321"
+      POSTGRES_DB: "hello_print"
+      POSTGRES_USER: "postgres"
     ports:
       - "15432:5432"
     volumes:
-      - ./hello-print/src/pgsql:/var/lib/postgresql/data
+      - ./database:/var/lib/postgresql/data
+      - ./docker_db/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
-      - postgres-network
+      - database
+      - kafka
 
   pgadmin:
     image: dpage/pgadmin4
     environment:
       PGADMIN_DEFAULT_EMAIL: "geovannylc@gmail.com"
-      PGADMIN_DEFAULT_PASSWORD: "@geo@030690"
+      PGADMIN_DEFAULT_PASSWORD: "@geo@geovanny@"
     ports:
       - "16543:80"
     depends_on:
       - postgres
     networks:
-      - postgres-network
+      - database
 
-  phpworker:
-    image: php:7.4-cli
+  kafka:
+    image: confluentinc/cp-kafka
     environment:
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: "1"
+      KAFKA_ADVERTISED_LISTENERS: "PLAINTEXT://kafka:9092"
+      KAFKA_ZOOKEEPER_CONNECT: "zookeeper:2181"
+    ports:
+      - "9092:9092"
+    depends_on:
+      - postgres
+    networks:
+      - database
+      - kafka
+
+  zookeeper:
+    image: confluentinc/cp-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: "2181"
+      ZOOKEEPER_TICK_TIME: 50
+    depends_on:
+      - kafka
+    networks:
+      - kafka
+
+  requester:
+    build: .
+    command: php requester.php --topic="topicA" --message="Hi," --append="start"
+    image: phpdockerio/php74-cli:latest
+    tty: true
+    working_dir: "/var/www/hello-print"
+    stdin_open: true
+    depends_on:
+      - kafka
+    env_file:
+      - .env
+    volumes:
+      - ./:/var/www/hello-print
+    networks:
+      - database
+      - kafka
+
+  service_a:
+    command: php listener.php --topic="topicA" --randomize=true --broadcast_topic="topicB"
+    image: phpdockerio/php74-cli:latest
+    tty: true
+    working_dir: "/var/www/hello-print"
+    stdin_open: true
+    depends_on:
+      - kafka
+    env_file:
+      - .env
+    volumes:
+      - ./:/var/www/hello-print
+    networks:
+      - database
+      - kafka
+
+  service_b:
+    command: php listener.php --topic="topicB" --message="Bye."
+    image: phpdockerio/php74-cli:latest
+    tty: true
+    working_dir: "/var/www/hello-print"
+    stdin_open: true
+    depends_on:
+      - service_a
+    env_file:
+      - .env
+    volumes:
+      - ./:/var/www/hello-print
+    networks:
+      - database
+      - kafka
 
 networks:
-  postgres-network:
-    driver: bridge
   kafka:
+    driver: bridge
+  database:
     driver: bridge

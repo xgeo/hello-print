@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project version="4">
-  <component name="ProjectModuleManager">
-    <modules>
-      <module fileurl="file://$PROJECT_DIR$/../hello-print/.idea/helloprint.iml" filepath="$PROJECT_DIR$/../hello-print/.idea/helloprint.iml" />
-    </modules>
-  </component>
-</project>
