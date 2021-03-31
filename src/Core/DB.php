@@ -24,7 +24,7 @@ class DB extends \PDO
      * @param $data
      * @return \stdClass|null
      */
-    public function create($data)
+    public function create($data): ?\stdClass
     {
         $dataInserted   = null;
 
@@ -38,7 +38,7 @@ class DB extends \PDO
             $SQL            = $this->getSelectSQL('*', "id = :id");
             $statement      = $this->prepare($SQL);
             $statement->execute(['id' => $id]);
-            $dataInserted   = $statement->fetch(\PDO::FETCH_ASSOC);
+            $dataInserted   = $statement->fetch(\PDO::FETCH_OBJ);
         }
 
         return $dataInserted;

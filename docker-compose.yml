@@ -56,7 +56,7 @@ services:
 
   requester:
     build: .
-    command: php requester.php --topic="topicA" --message="Hi," --append="start"
+    command: php requester.php --topic="topicA" --message="Hi," --pulling="false"
     image: phpdockerio/php74-cli:latest
     tty: true
     stdin_open: true
@@ -72,13 +72,13 @@ services:
       - kafka
 
   service_a:
-    command: php listener.php --topic="topicA" --randomize=true --broadcast_topic="topicB"
+    command: php requester.php --topic="topicA" --broadcast_topic="topicB" --randomize=true --pulling="true"
     image: phpdockerio/php74-cli:latest
     tty: true
     working_dir: "/var/www/hello-print"
     stdin_open: true
     depends_on:
-      - kafka
+      - requester
     env_file:
       - .env
     volumes:
@@ -88,7 +88,7 @@ services:
       - kafka
 
   service_b:
-    command: php listener.php --topic="topicB" --message="Bye."
+    command: php requester.php --topic="topicB" --message="Bye." --pulling="true"
     image: phpdockerio/php74-cli:latest
     tty: true
     working_dir: "/var/www/hello-print"

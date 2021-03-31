@@ -21,9 +21,8 @@ trait ProducerTrait
      */
     public function createMessage(string $topic, string $message)
     {
-        $message        = $this->context->createMessage($message);
-        $topic          = $this->context->createTopic($topic);
-
+        $topic = $this->context->createTopic($topic);
+        $message = $this->context->createMessage($message);
         $this->context->createProducer()->send($topic, $message);
     }
 }

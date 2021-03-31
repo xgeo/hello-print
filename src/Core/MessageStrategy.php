@@ -1,11 +1,12 @@
 <?php
-
-
 namespace HelloPrint\Core;
-
 
 use HelloPrint\Models\Request;
 
+/**
+ * Class MessageStrategy
+ * @package HelloPrint\Core
+ */
 class MessageStrategy
 {
     protected Request $request;
@@ -13,79 +14,101 @@ class MessageStrategy
     private bool $isRandomize = false;
     private string $append = "start";
 
+    /**
+     * MessageStrategy constructor.
+     * @param Request $request
+     */
     public function __construct(Request $request)
     {
         $this->request = $request;
         $this->randomize = new RandomNames();
     }
 
-    public function process(string $messageBody, ?string $appendToMessage): \stdClass
+    /**
+     * @param string $messageBody
+     * @param string|null $appendToMessage
+     * @return \stdClass|null
+     */
+    public function store(string $messageBody, ?string $appendToMessage): ?\stdClass
     {
-        $object = new \stdClass();
-
-        list ($id, $message) = $this->processMessageId($messageBody, $appendToMessage);
-
-        if (!is_null($message)) {
-            $object = $this->saveMessage($message, $id);
-        }
-
-        return $object;
+        list($id, $message) = $this->listMessageProperties($messageBody, $appendToMessage);
+        return $this->saveMessage($message ?: $appendToMessage, $id);
     }
 
+    /**
+     * @param bool $isRandomize
+     */
     public function setRandomize(bool $isRandomize)
     {
         $this->isRandomize = $isRandomize;
     }
 
+    /**
+     * @param string $append
+     */
     public function setAppend(string $append)
     {
         $this->append = $append;
     }
 
-    private function processMessageId(string $messageBody, ?string $appendToMessage)
+    /**
+     * @param string|int|null $messageBody
+     * @param string|null $appendToMessage
+     * @return array
+     */
+    final private function listMessageProperties($messageBody, ?string $appendToMessage)
     {
         $id = null;
+        $responseMessage = null;
 
-        if (!empty($messageBody) && strpos($messageBody, "id=") !== false)
+        if (is_numeric($messageBody))
         {
-            $values         = explode("=", $messageBody);
-            $id             = (int) $values[1];
-            $requestEntity  = $this->request->findById($id);
+            $requestEntity  = $this->request->findById((int) $messageBody);
 
             if ($requestEntity && !is_null($appendToMessage)) {
 
+                $id = (int) $messageBody;
+
                if ($this->append === "start") {
-                    $messageBody = "{$requestEntity->message} {$appendToMessage}";
+                   $responseMessage = "{$requestEntity->message} {$appendToMessage}";
                 } else {
-                    $messageBody = "{$appendToMessage} {$requestEntity->message}";
+                   $responseMessage = "{$appendToMessage} {$requestEntity->message}";
                 }
 
-            } else {
-                $messageBody = null;
             }
 
         } else if ($this->isRandomize) {
-            $messageBody = "{$messageBody} {$this->randomize->getName()}";
+            $responseMessage = "{$messageBody} {$this->randomize->getName()}";
         }
 
         return [
             $id,
-            $messageBody
+            $responseMessage
         ];
     }
 
-    private function saveMessage(string $message, $id = null): \stdClass
+    /**
+     * @param string|null $message
+     * @param int|null $id
+     * @return \stdClass|null
+     */
+    private function saveMessage(?string $message, ?int $id): ?\stdClass
     {
-        $data = [
-            'message'   => $message
-        ];
+        $data = null;
 
-        if (is_null($id)) {
-            $data = $this->request->create($data);
-        } else {
-            $this->request->update($id, $data);
+        if (!is_null($message)) {
+            $insert = [
+                'message' => $message
+            ];
+
+            if (is_null($id)) {
+                $data = $this->request->create($insert);
+            } else {
+                $isUpdated = $this->request->update((int) $id, $insert);
+                $data = $isUpdated ? (object) compact('id','message') : null;
+            }
         }
 
-        return (object) $data;
+        return $data;
     }
 }

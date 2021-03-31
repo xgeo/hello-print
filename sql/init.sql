@@ -1,9 +1,6 @@
-DROP DATABASE IF EXISTS hello_print;
-CREATE DATABASE hello_print;
-
-CREATE TABLE requests (
+CREATE TABLE IF NOT EXISTS requests (
    id bigserial PRIMARY KEY,
    message text,
-   created_at timestamp DEFAULT current_timestamp,
-   updated_at timestamp
+   created_at timestamp with time zone,
+   updated_at timestamp with time zone DEFAULT NULL
 );

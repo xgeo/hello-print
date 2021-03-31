@@ -21,6 +21,7 @@
             "HelloPrint\\Consumers\\": "src/Consumers",
             "HelloPrint\\Core\\": "src/Core",
             "HelloPrint\\Core\\Helpers\\": "src/Core/Helpers",
+            "HelloPrint\\Core\\Helpers\\Functions\\": "src/Core/Helpers/functions.php",
             "HelloPrint\\Models\\": "src/Models",
             "HelloPrint\\Producers\\": "src/Producers"
         }
