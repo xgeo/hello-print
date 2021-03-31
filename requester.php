@@ -2,9 +2,9 @@
 require_once './vendor/autoload.php';
 use \HelloPrint\Core\Worker;
 use \HelloPrint\Producers\MainProducer;
-use \HelloPrint\Consumers\MainConsumer;
 use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Exception\InvalidMessageException;
+$GLOBALS['isVerboseActive'] = true;
 
 if (!function_exists('facadeInitialize')) {
     /**
@@ -15,9 +15,19 @@ if (!function_exists('facadeInitialize')) {
      */
     function facadeInitialize(array $input)
     {
+        if (isset($input['verbose'])) {
+            $isVerboseActive = ($input['verbose'] === 'true');
+            $GLOBALS['isVerboseActive'] = $isVerboseActive;
+        }
+
         $isPullingActive = false;
         if (isset($input['pulling'])) {
             $isPullingActive = ($input['pulling'] === "true");
+        }
+
+        $append = false;
+        if (isset($input['append'])) {
+            $append = ($input['append'] === 'true');
         }
 
         $hasMessage = false;
@@ -25,19 +35,17 @@ if (!function_exists('facadeInitialize')) {
             $hasMessage = true;
         }
 
-        if ($hasMessage) {
+        if (!$append && $hasMessage) {
             MainProducer::getInstance()->createMessage($input['topic'], $input['message']);
-        }
-
-        if ($isPullingActive) {
-            Worker::startPulling($input, MainConsumer::getInstance());
+        } else if ($isPullingActive) {
+            Worker::startPulling($input);
         }
     }
 }
 
 try {
     $input = getopt('',
-        ["topic::", "message::", "broadcast_topic:", "randomize::", "append::", "pulling::"]
+        ["topic::", "message::", "broadcast_topic:", "randomize::", "append::", "appendTo", "pulling::", "verbose::"]
     );
 
     facadeInitialize($input);

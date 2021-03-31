@@ -27,22 +27,22 @@ class Worker
         $messageStrategy = new MessageStrategy(new Request());
         $messageStrategy->setRandomize($isRandomize);
 
-        if (isset($input['append'])) {
-            $messageStrategy->setAppend($input['append']);
+        if (isset($input['append']) && isset($input['appendTo'])) {
+            var_dump($input['appendTo']);
+            $messageStrategy->setAppendTo($input['appendTo']);
         }
 
         return $messageStrategy->store($messageBody, $input['message']);
     }
 
     /**
-     * @param ConsumerInterface $consumer
      * @param array $input
      * @return \stdClass
      * @throws \Exception
      */
-    public static function pulling(ConsumerInterface $consumer, array $input)
+    public static function pulling(array $input)
     {
-        $response = $consumer->subscribe($input['topic'], 50*1000);
+        $response = MainConsumer::getInstance()->subscribe($input['topic'], 50 * 1000);
 
         if ($response) {
             /** @var \stdClass $kafkaMessage */
@@ -66,7 +66,7 @@ class Worker
      */
     public static function display(\stdClass $request): void
     {
-        if ($request->message) {
+        if ($request->message && $GLOBALS['isVerboseActive']) {
             echo "\n{$request->message}\n";
         }
     }
@@ -82,13 +82,13 @@ class Worker
      * @param array $input
      * @param MainConsumer $consumer
      */
-    public static function startPulling(array $input, MainConsumer $consumer)
+    public static function startPulling(array $input)
     {
         while (true)
         {
             try
             {
-                $request = self::pulling($consumer, $input);
+                $request = self::pulling($input);
 
                 self::display($request);
 
@@ -107,7 +107,9 @@ class Worker
      */
     public static function displayTime(string $dump)
     {
-        $created_at = (new \DateTime())->format(DATE_ISO8601);
-        echo "\n[Exception] :: [{$created_at}] :: {$dump} \n";;
+        if ($GLOBALS['isVerboseActive']) {
+            $created_at = (new \DateTime())->format(DATE_ISO8601);
+            echo "\n[Exception] :: [{$created_at}] :: {$dump} \n";;
+        }
     }
 }

@@ -12,7 +12,7 @@ class MessageStrategy
     protected Request $request;
     private RandomNames $randomize;
     private bool $isRandomize = false;
-    private string $append = "start";
+    private string $appendTo = 'prefix';
 
     /**
      * MessageStrategy constructor.
@@ -32,7 +32,8 @@ class MessageStrategy
     public function store(string $messageBody, ?string $appendToMessage): ?\stdClass
     {
         list($id, $message) = $this->listMessageProperties($messageBody, $appendToMessage);
-        return $this->saveMessage($message ?: $appendToMessage, $id);
+
+        return $this->saveMessage($message, $id);
     }
 
     /**
@@ -43,12 +44,9 @@ class MessageStrategy
         $this->isRandomize = $isRandomize;
     }
 
-    /**
-     * @param string $append
-     */
-    public function setAppend(string $append)
+    public function setAppendTo(string $appendTo = 'prefix')
     {
-        $this->append = $append;
+        $this->appendTo = $appendTo;
     }
 
     /**
@@ -59,7 +57,7 @@ class MessageStrategy
     final private function listMessageProperties($messageBody, ?string $appendToMessage)
     {
         $id = null;
-        $responseMessage = null;
+        $responseMessage = $messageBody;
 
         if (is_numeric($messageBody))
         {
@@ -69,16 +67,17 @@ class MessageStrategy
 
                 $id = (int) $messageBody;
 
-               if ($this->append === "start") {
+               if ($this->appendTo === 'start') {
                    $responseMessage = "{$requestEntity->message} {$appendToMessage}";
                 } else {
                    $responseMessage = "{$appendToMessage} {$requestEntity->message}";
                 }
 
+            } else if ($requestEntity && $this->isRandomize) {
+                $responseMessage = "{$requestEntity->message} {$this->randomize->getName()}";
+            } else if ($requestEntity) {
+                $responseMessage = $requestEntity->message;
             }
-
-        } else if ($this->isRandomize) {
-            $responseMessage = "{$messageBody} {$this->randomize->getName()}";
         }
 
         return [

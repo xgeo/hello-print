@@ -12,7 +12,7 @@ services:
     ports:
       - "15432:5432"
     volumes:
-      - ./database:/var/lib/postgresql/data
+      - ./database/data:/var/lib/postgresql/data
       - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - database
@@ -54,32 +54,18 @@ services:
     networks:
       - kafka
 
-  composer:
-    build: .
-    command: composer install
-    image: phpdockerio/php74-cli:latest
-    tty: true
-    stdin_open: true
-    working_dir: "/var/www/hello-print"
-    depends_on:
-      - zookeeper
-    env_file:
-      - .env
-    volumes:
-      - ./:/var/www/hello-print
-    networks:
-      - database
-      - kafka
-
   requester:
-    command: php requester.php --topic="topicA" --message="Hi," --pulling="false"
+    build: .
+    command: >
+      bash -c "composer install
+      && php requester.php --topic=broker --message=Hi, --broadcast_topic=topicA --pulling=false
+      && php requester.php --topic=broker --broadcast_topic=topicA --pulling=true"
     image: phpdockerio/php74-cli:latest
     tty: true
     stdin_open: true
     working_dir: "/var/www/hello-print"
     depends_on:
-      - composer
-      - postgres
+      - kafka
     env_file:
       - .env
     volumes:
@@ -89,14 +75,14 @@ services:
       - kafka
 
   service_a:
-    command: php requester.php --topic="topicA" --broadcast_topic="topicB" --randomize=true --pulling="true"
+    command: >
+      bash -c "composer install && php requester.php --topic=topicA --broadcast_topic=broker --randomize=true --pulling=true --verbose=false"
     image: phpdockerio/php74-cli:latest
     tty: true
     working_dir: "/var/www/hello-print"
     stdin_open: true
     depends_on:
-      - composer
-      - postgres
+      - requester
     env_file:
       - .env
     volumes:
@@ -106,14 +92,15 @@ services:
       - kafka
 
   service_b:
-    command: php requester.php --topic="topicB" --message="Bye." --pulling="true"
+    command: >
+      bash -c "composer install
+      && php requester.php --topic=topicB --broadcast_topic=broker --message=Bye. --append=true --appendTo=suffix --verbose=false"
     image: phpdockerio/php74-cli:latest
     tty: true
     working_dir: "/var/www/hello-print"
     stdin_open: true
     depends_on:
-      - composer
-      - postgres
+      - service_a
     env_file:
       - .env
     volumes:
