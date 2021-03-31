@@ -54,15 +54,32 @@ services:
     networks:
       - kafka
 
-  requester:
+  composer:
     build: .
+    command: composer install
+    image: phpdockerio/php74-cli:latest
+    tty: true
+    stdin_open: true
+    working_dir: "/var/www/hello-print"
+    depends_on:
+      - zookeeper
+    env_file:
+      - .env
+    volumes:
+      - ./:/var/www/hello-print
+    networks:
+      - database
+      - kafka
+
+  requester:
     command: php requester.php --topic="topicA" --message="Hi," --pulling="false"
     image: phpdockerio/php74-cli:latest
     tty: true
     stdin_open: true
     working_dir: "/var/www/hello-print"
     depends_on:
-      - kafka
+      - composer
+      - postgres
     env_file:
       - .env
     volumes:
@@ -78,7 +95,8 @@ services:
     working_dir: "/var/www/hello-print"
     stdin_open: true
     depends_on:
-      - requester
+      - composer
+      - postgres
     env_file:
       - .env
     volumes:
@@ -94,7 +112,8 @@ services:
     working_dir: "/var/www/hello-print"
     stdin_open: true
     depends_on:
-      - service_a
+      - composer
+      - postgres
     env_file:
       - .env
     volumes:

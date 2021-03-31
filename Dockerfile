@@ -14,11 +14,13 @@ ENV BUILD_DEPS \
         zlib1g-dev \
         libicu-dev \
         curl \
+        zip \
+        unzip \
         libzip-dev
 
 RUN apt-get update \
     && apt-get install -y --no-install-recommends ${BUILD_DEPS} \
-    && docker-php-ext-install pdo pdo_pgsql pgsql \
+    && docker-php-ext-install pdo pdo_pgsql pgsql zip \
     && sed -i -e 's/;extension=pgsql/extension=pgsql/' /usr/local/etc/php/conf.d/docker-php-ext-pgsql.ini \
     && sed -i -e 's/;extension=pdo_pgsql/extension=pdo_pgsql/' /usr/local/etc/php/conf.d/docker-php-ext-pdo_pgsql.ini \
     && sed -i -e 's/;extension=pdo_pgsql/extension=sodium/' /usr/local/etc/php/conf.d/docker-php-ext-sodium.ini
@@ -41,6 +43,5 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');"
 RUN php -r "if (hash_file('sha384', 'composer-setup.php') === '756890a4488ce9024fc62c56153228907f1545c228516cbf63f885e036d37e9a59d27d63f46af1d4d07ee0f76181c7d3') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;"
 RUN php composer-setup.php --install-dir=/usr/local/bin/ --filename=composer
 RUN php -r "unlink('composer-setup.php');"
-RUN composer install --no-plugins --no-scripts
 
 COPY ./sql/init.sql /docker-entrypoint-initdb.d/
