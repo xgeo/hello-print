@@ -1,6 +1,8 @@
 <?php
 namespace HelloPrint\Core;
 
+use HelloPrint\Models\Request;
+
 /**
  * Class DB
  * @package HelloPrint\Core
@@ -24,7 +26,7 @@ class DB extends \PDO
      * @param $data
      * @return \stdClass|null
      */
-    public function create($data): ?\stdClass
+    public function create($data): ?Request
     {
         $dataInserted   = null;
 
@@ -38,7 +40,8 @@ class DB extends \PDO
             $SQL            = $this->getSelectSQL('*', "id = :id");
             $statement      = $this->prepare($SQL);
             $statement->execute(['id' => $id]);
-            $dataInserted   = $statement->fetch(\PDO::FETCH_OBJ);
+            $statement->setFetchMode(\PDO::FETCH_CLASS, Request::class);
+            $dataInserted   = $statement->fetch();
         }
 
         return $dataInserted;

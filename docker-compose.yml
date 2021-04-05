@@ -58,14 +58,17 @@ services:
     build: .
     command: >
       bash -c "composer install
-      && php requester.php --topic=broker --message=Hi, --broadcast_topic=topicA --pulling=false
-      && php requester.php --topic=broker --broadcast_topic=topicA --pulling=true"
+      && php requester.php"
     image: phpdockerio/php74-cli:latest
+    environment:
+      XDEBUG_CONFIG: "remote_host=0.0.0.0"
+      PHP_IDE_CONFIG: "serverName=xdebug-docker"
     tty: true
     stdin_open: true
     working_dir: "/var/www/hello-print"
     depends_on:
       - kafka
+      - postgres
     env_file:
       - .env
     volumes:
@@ -76,12 +79,13 @@ services:
 
   service_a:
     command: >
-      bash -c "composer install && php requester.php --topic=topicA --broadcast_topic=broker --randomize=true --pulling=true --verbose=false"
+      bash -c "composer install && php serviceA.php"
     image: phpdockerio/php74-cli:latest
     tty: true
     working_dir: "/var/www/hello-print"
     stdin_open: true
     depends_on:
+      - kafka
       - requester
     env_file:
       - .env
@@ -94,13 +98,14 @@ services:
   service_b:
     command: >
       bash -c "composer install
-      && php requester.php --topic=topicB --broadcast_topic=broker --message=Bye. --append=true --appendTo=suffix --verbose=false"
+      && php serviceB.php"
     image: phpdockerio/php74-cli:latest
     tty: true
     working_dir: "/var/www/hello-print"
     stdin_open: true
     depends_on:
-      - service_a
+      - requester
+      - kafka
     env_file:
       - .env
     volumes:
