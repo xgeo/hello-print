@@ -61,11 +61,13 @@ services:
       && php requester.php"
     image: phpdockerio/php74-cli:latest
     environment:
-      XDEBUG_CONFIG: "remote_host=0.0.0.0"
+      XDEBUG_CONFIG: "remote_host=host.docker.internal"
       PHP_IDE_CONFIG: "serverName=xdebug-docker"
     tty: true
     stdin_open: true
     working_dir: "/var/www/hello-print"
+    ports:
+    - "9000:9000"
     depends_on:
       - kafka
       - postgres

@@ -72,9 +72,10 @@ abstract class AbstractWorker
                 throw new Exception(ResponseMessage::NO_RESPONSE);
             }
 
-            $json->from = $topic;
+            $jsonObject = json_decode($json->body, false);
+            $jsonObject->from = $topic;
 
-            return $this->factoryMessage($json);
+            return $this->factoryMessage($jsonObject);
 
         } else {
             throw new Exception(ResponseMessage::NO_RESPONSE);

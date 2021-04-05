@@ -20,7 +20,7 @@ class Broker extends AbstractWorker
      */
     public function createHiMessage()
     {
-        $this->emit(EventSource::BROKER, 'Hi,');
+        $this->emit(EventSource::BROKER, json_encode(['message' => 'Hi,', 'from' => EventSource::BROKER]));
     }
 
 
@@ -38,10 +38,16 @@ class Broker extends AbstractWorker
 
                     echo $request->getJsonBody();
 
+                    $jsonMessage = [
+                        'message' => $request->getJsonBody(),
+                        'from' => EventSource::BROKER,
+                        'id' => $response->id
+                    ];
+
                     if ($request->isFromA()) {
-                        $this->emit(EventSource::TOPIC_B, $request->getJsonBody());
+                        $this->emit(EventSource::TOPIC_B, json_encode($jsonMessage));
                     } else if ($request->isFromBroker()) {
-                        $this->emit(EventSource::TOPIC_A, $request->getJsonBody());
+                        $this->emit(EventSource::TOPIC_A, json_encode($jsonMessage));
                     }
                 }
 
