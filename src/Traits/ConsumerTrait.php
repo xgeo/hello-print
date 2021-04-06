@@ -3,8 +3,10 @@
 
 namespace HelloPrint\Traits;
 
+use Enqueue\RdKafka\RdKafkaConsumer;
 use Enqueue\RdKafka\RdKafkaContext;
 use Enqueue\RdKafka\RdKafkaTopic;
+use Interop\Queue\Consumer;
 
 /**
  * Trait ConsumerTrait
@@ -15,14 +17,13 @@ trait ConsumerTrait
 {
     /**
      * @param string $topic
-     * @param int $timeout
-     * @return \Enqueue\RdKafka\RdKafkaMessage|\Interop\Queue\Message|null
+     * @return RdKafkaConsumer|Consumer
      */
-    public function subscribe(string $topic, int $timeout = 50)
+    public function subscribe(string $topic): Consumer
     {
         /** @var RdKafkaTopic $topic */
         $topic = $this->context->createTopic($topic);
 
-        return $this->context->createConsumer($topic)->receive($timeout);
+        return $this->context->createConsumer($topic);
     }
 }
