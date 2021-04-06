@@ -56,9 +56,7 @@ services:
 
   requester:
     build: .
-    command: >
-      bash -c "composer install
-      && php requester.php"
+    command: php requester.php
     image: phpdockerio/php74-cli:latest
     environment:
       XDEBUG_CONFIG: "remote_host=host.docker.internal"
@@ -80,8 +78,7 @@ services:
       - kafka
 
   service_a:
-    command: >
-      bash -c "composer install && php serviceA.php"
+    command: php serviceA.php
     image: phpdockerio/php74-cli:latest
     tty: true
     working_dir: "/var/www/hello-print"
@@ -98,9 +95,7 @@ services:
       - kafka
 
   service_b:
-    command: >
-      bash -c "composer install
-      && php serviceB.php"
+    command: php serviceB.php
     image: phpdockerio/php74-cli:latest
     tty: true
     working_dir: "/var/www/hello-print"
