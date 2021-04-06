@@ -26,8 +26,6 @@ class WorkerMessage
      */
     private ?\stdClass $json;
 
-    private ?\stdClass $details;
-
     /**
      * WorkerMessage constructor.
      * @param Request $request
@@ -49,6 +47,11 @@ class WorkerMessage
         return $this->json->from === EventSource::TOPIC_B;
     }
 
+    public function isFromInitializer(): bool
+    {
+        return $this->json->from === EventSource::INITIALIZER;
+    }
+
     public function isFromBroker(): bool
     {
         return $this->json->from === EventSource::BROKER;
@@ -59,23 +62,23 @@ class WorkerMessage
      */
     public function isEmptyMessage(): bool
     {
-        return empty($this->getJsonBody());
+        return is_null($this->json) && is_null($this->json->message) && empty($this->json->message);
     }
 
     /**
      * @return string|null
      */
-    public function getJsonBody(): ?string
+    public function getMessage(): ?string
     {
-        return $this->json->body;
+        return $this->json->message;
     }
 
     /**
      * @return mixed
      */
-    public function getJsonBodyObject(): ?\stdClass
+    public function getJson(): ?\stdClass
     {
-        return json_decode($this->getJsonBody(), false);
+        return $this->json;
     }
 
     /**
@@ -85,7 +88,7 @@ class WorkerMessage
      */
     public function concat(string $message): string
     {
-        $msg = $this->getJsonBody();
+        $msg = $this->getMessage();
 
         if (is_null($msg)) {
             throw new \Exception(ResponseMessage::EMPTY_MESSAGE_BODY);
@@ -99,7 +102,7 @@ class WorkerMessage
      */
     public function store(): ?Request
     {
-        return $this->saveMessage($this->getJsonBody());
+        return $this->saveMessage($this->getMessage());
     }
 
     /**

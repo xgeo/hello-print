@@ -21,13 +21,15 @@ class WorkerB extends AbstractWorker
      */
     public function initPulling(?WorkerOptions $options): void
     {
+        $consumer = $this->consumer->subscribe($options->topic);
+
         while (true)
         {
             try
             {
-                $request = $this->pulling($options->topic, $options->ms);
+                $request = $this->pulling($consumer, $options->ms);
 
-                if (!$request->isEmptyMessage()) {
+                if (!is_null($request) && !$request->isEmptyMessage()) {
                     $message = $request->concat(" Bye.");
                     $from = $options->topic;
                     $this->emit(EventSource::BROKER, json_encode(compact('message', 'from')));

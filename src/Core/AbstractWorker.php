@@ -9,6 +9,7 @@ use HelloPrint\Enums\ResponseMessage;
 use HelloPrint\Models\Request;
 use HelloPrint\Producers\MainProducer;
 use \Exception;
+use Interop\Queue\Consumer;
 use Interop\Queue\Exception\InvalidDestinationException;
 use Interop\Queue\Exception\InvalidMessageException;
 
@@ -53,16 +54,18 @@ abstract class AbstractWorker
     }
 
     /**
-     * @param string $topic
-     * @param int $ms
+     * @param Consumer $consumer
+     * @param WorkerOptions $options
      * @return WorkerMessage|null
      * @throws Exception
      */
-    protected function pulling(string $topic, int $ms = 50): ?WorkerMessage
+    protected function pulling(Consumer $consumer, WorkerOptions $options): ?WorkerMessage
     {
-        $response = $this->consumer->subscribe($topic, $ms * 1000);
 
-        if ($response) {
+        $response = $consumer->receive($options->ms * 1000);
+
+        if (!is_null($consumer) && !$response->isRedelivered()) {
+
             /** @var \stdClass $kafkaMessage */
             $kafkaMessage   = $response->getKafkaMessage();
 
@@ -73,7 +76,7 @@ abstract class AbstractWorker
             }
 
             $jsonObject = json_decode($json->body, false);
-            $jsonObject->from = $topic;
+            $jsonObject->from = $options->topic;
 
             return $this->factoryMessage($jsonObject);
 

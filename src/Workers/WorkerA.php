@@ -16,17 +16,22 @@ use HelloPrint\Enums\EventSource;
 class WorkerA extends AbstractWorker
 {
 
+    /**
+     * @param WorkerOptions|null $options
+     * @throws \Interop\Queue\Exception
+     */
     public function initPulling(?WorkerOptions $options): void
     {
+        $consumer = $this->consumer->subscribe($options->topic);
+
         while (true)
         {
             try
             {
-                $request = $this->pulling($options->topic, $options->ms);
+                $request = $this->pulling($consumer, $options->ms);
 
-                if (!$request->isEmptyMessage()) {
+                if (!is_null($request) && !$request->isEmptyMessage()) {
                     $randomName = new RandomNames();
-
                     $message = $request->concat($randomName->getName());
                     $from = $options->topic;
                     $this->emit(EventSource::BROKER, json_encode(compact('message', 'from')));

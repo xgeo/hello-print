@@ -43,6 +43,8 @@ class WorkerOptions
         $this->verbose  = $args['verbose'] ?? false;
         $this->message  = $args['message'] ?? false;
         $this->topic    = $args['topic'] ?? false;
-        $this->ms       = $args['ms'] ?? false;
+        if (isset($args['ms'])) {
+            $this->ms = $args['ms'];
+        }
     }
 }
