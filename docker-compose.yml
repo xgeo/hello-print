@@ -12,8 +12,8 @@ services:
     ports:
       - "15432:5432"
     volumes:
-      - ./database:/var/lib/postgresql/data
-      - ./docker_db/init.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./database/data:/var/lib/postgresql/data
+      - ./sql/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - database
       - kafka
@@ -21,8 +21,8 @@ services:
   pgadmin:
     image: dpage/pgadmin4
     environment:
-      PGADMIN_DEFAULT_EMAIL: "geovannylc@gmail.com"
-      PGADMIN_DEFAULT_PASSWORD: "@geo@geovanny@"
+      PGADMIN_DEFAULT_EMAIL: "root@helloprint.com"
+      PGADMIN_DEFAULT_PASSWORD: "@hp@test@"
     ports:
       - "16543:80"
     depends_on:
@@ -56,49 +56,51 @@ services:
 
   requester:
     build: .
-    command: php requester.php --topic="topicA" --message="Hi," --append="start"
-    image: phpdockerio/php74-cli:latest
+    command: php requester.php
+    image: hello_print_image
+    environment:
+      XDEBUG_CONFIG: "remote_host=host.docker.internal"
+      PHP_IDE_CONFIG: "serverName=xdebug-docker"
     tty: true
     stdin_open: true
     working_dir: "/var/www/hello-print"
+    ports:
+    - "9006:9006"
     depends_on:
       - kafka
+      - postgres
     env_file:
       - .env
-    volumes:
-      - ./:/var/www/hello-print
     networks:
       - database
       - kafka
 
   service_a:
-    command: php listener.php --topic="topicA" --randomize=true --broadcast_topic="topicB"
-    image: phpdockerio/php74-cli:latest
+    command: php serviceA.php
+    image: hello_print_image
     tty: true
     working_dir: "/var/www/hello-print"
     stdin_open: true
     depends_on:
+      - requester
       - kafka
     env_file:
       - .env
-    volumes:
-      - ./:/var/www/hello-print
     networks:
       - database
       - kafka
 
   service_b:
-    command: php listener.php --topic="topicB" --message="Bye."
-    image: phpdockerio/php74-cli:latest
+    command: php serviceB.php
+    image: hello_print_image
     tty: true
     working_dir: "/var/www/hello-print"
     stdin_open: true
     depends_on:
-      - service_a
+      - requester
+      - kafka
     env_file:
       - .env
-    volumes:
-      - ./:/var/www/hello-print
     networks:
       - database
       - kafka
